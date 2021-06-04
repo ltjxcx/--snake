@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            background-color: #ccc;
+        }
+        /*    img {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            top: 500px;
+            left: 500px;
+        }*/
+    </style>
+</head>
+
+
+<body>
+
+</body>
+<script>
+    var img = document.querySelector('img')
+        // 1.封装地图
+    function Map() {
+        // 设置属性
+        this.width = "900px";
+        this.height = "675px";
+        this.backgroundImage = 'url("./images/bg.jpg")';
+        this.position = "relative";
+        this.top = " calc(50% - 337px)";
+        this.left = "calc(50% - 450px)";
+        // 地图节点
+        this._map = null;
+    }
+    // 3.显示方法
+    Map.prototype.show = function() {
+        // 创建地图
+        this._map = document.createElement("div");
+        // 设置样式
+        this._map.style.width = this.width;
+        this._map.style.height = this.height;
+        this._map.style.backgroundImage = this.backgroundImage;
+        this._map.style.position = this.position;
+        this._map.style.top = this.top;
+        this._map.style.left = this.left;
+        // 把地图节点添加进body
+        document.body.appendChild(this._map)
+    }
+
+    // 2.实例化对象
+    var map = new Map;
+    // 4.调用显示方法
+    map.show();
+
+
+    // 5.封装开始按钮
+    function Start() {
+        // 设置属性
+        this.width = "200px";
+        this.height = "167px";
+        this.position = "absolute";
+        this.top = " calc(50% - 100px)";
+        this.left = "calc(50% - 100px)";
+        this.src = "./images/startGame.png";
+        // 开始按钮节点
+        this._start = null;
+        // 定时器 
+        this.timer = null;
+    }
+
+    // 7.显示方法
+    Start.prototype.show = function() {
+        // 创建开始按钮
+        this._start = document.createElement("img");
+        // 设置样式
+        this._start.style.width = this.width;
+        this._start.style.height = this.height;
+        this._start.style.position = this.position;
+        this._start.style.top = this.top;
+        this._start.style.left = this.left;
+        this._start.src = this.src;
+        // 把开始按钮节点添加进地图节点
+        map._map.appendChild(this._start)
+    }
+
+    // 6.实例化对象
+    var start = new Start;
+
+    // 8.调用显示方法
+    start.show();
+
+    alert("游戏规则如下：\n1、本游戏名为趣味贪吃蛇，点击开始游戏即可开玩\n2、如果希望中途暂停游戏，请点击空格键\n3、一轮游戏结束后，重新开始请点击左上角的开始按钮")
+        // 9.给开始按钮绑定单击事件
+    start._start.onclick = function dianji() {
+        // 开始按钮隐藏
+        start._start.style.display = "none";
+
+
+
+        // 10.封装游戏区
+        function Game() {
+            // 设置属性
+            this.width = "360px";
+            this.height = "220px";
+            this.position = "absolute";
+            this.top = "207px";
+            this.left = "268px";
+            this.border = "1px solid red"
+                // 游戏区节点
+            this._game = null;
+        }
+
+        // 12.显示方法
+        Game.prototype.show = function() {
+            // 创建游戏区
+            this._game = document.createElement("div");
+            // 设置样式
+            this._game.style.width = this.width;
+            this._game.style.height = this.height;
+            this._game.style.position = this.position;
+            this._game.style.top = this.top;
+            this._game.style.left = this.left;
+            this._game.style.border = this.border;
+            // 把游戏区节点添加进地图节点
+            map._map.appendChild(this._game)
+        }
+
+        // 11.实例化对象
+        var game = new Game;
+
+        // 13.调用显示方法
+        game.show();
+
+        // 14.封装食物
+        function Food() {
+            // 设置属性
+            this.width = "20px";
+            this.height = "20px";
+            this.position = "absolute";
+            this.top = 0;
+            this.left = 0;
+            this.backgroundImage = "url('./images/apple.png')";
+            this.backgroundSize = "cover";
+            // 食物节点
+            this._food = null;
+        }
+
+        // 16.显示方法
+        Food.prototype.show = function() {
+            // 判断食物是否为空
+            if (this._food == null) {
+                // 创建食物
+                this._food = document.createElement("div");
+                // 设置样式
+                this._food.style.width = this.width;
+                this._food.style.height = this.height;
+                this._food.style.position = this.position;
+                this._food.style.backgroundImage = this.backgroundImage;
+                this._food.style.backgroundSize = this.backgroundSize;
+                // 把食物节点添加进游戏区节点
+                game._game.appendChild(this._food)
+            }
+
+            // 调用随机食物方法
+            this.random();
+            this._food.style.top = this.top * 20 + "px";
+            this._food.style.left = this.left * 20 + "px";
+        }
+
+        // 18.随机食物的方法
+        Food.prototype.random = function() {
+            // 最大的top ==>11*20=220
+            // 最大的left ==>18*20=360
+            this.top = Math.floor(Math.random() * 11)
+            this.left = Math.floor(Math.random() * 18)
+        }
+
+        // 15.实例化对象
+        var food = new Food;
+
+        // 17.调用显示方法
+        food.show();
+
+
+        // 19.封装蛇
+        function Snake() {
+            // 设置属性
+
+            this.width = "20px";
+            this.height = "20px";
+            this.position = "absolute";
+            this.backgroundSize = "cover";
+            this.body = [
+                [2, 1, "url('./images/head.png')", null],
+                [1, 1, "url('./images/body.png')", null],
+                [1, 0, "url('./images/body.png')", null],
+                [0, 0, "url('./images/body.png')", null]
+            ];
+            // 方向(默认向右)
+            this.direction = "right";
+            // 分数
+            this.score = 0
+                //console.log(this.body[0][2]);
+        }
+
+        // 21.蛇显示的方法
+        Snake.prototype.show = function() {
+            for (var i = 0; i < this.body.length; i++) {
+                // 判断蛇部位是否被创建
+                if (this.body[i][3] == null) {
+                    // 创建蛇部位
+                    this.body[i][3] = document.createElement("div");
+                    // 设置样式
+                    this.body[i][3].style.width = this.width;
+                    this.body[i][3].style.height = this.height;
+                    this.body[i][3].style.position = this.position;
+                    this.body[i][3].style.backgroundSize = this.backgroundSize;
+                    this.body[i][3].style.backgroundImage = this.body[i][2];
+                    //把蛇添加进游戏区
+                    game._game.appendChild(this.body[i][3]);
+                }
+                // 定位
+                this.body[i][3].style.left = this.body[i][0] * 20 + "px";
+                this.body[i][3].style.top = this.body[i][1] * 20 + "px";
+            }
+        }
+
+        // 23.蛇移动的方法
+        Snake.prototype.move = function() {
+            for (var i = this.body.length - 1; i > 0; i--) {
+                // 蛇后面部位是跟随上一个部位移动的
+                this.body[i][0] = this.body[i - 1][0]
+                this.body[i][1] = this.body[i - 1][1]
+            }
+
+            // 根据蛇的方向
+            if (this.direction == "top") {
+                this.body[0][1]--;
+            } else if (this.direction == "bottom") {
+                this.body[0][1]++;
+            } else if (this.direction == "left") {
+                this.body[0][0]--;
+            } else if (this.direction == "right") {
+                this.body[0][0]++;
+            }
+
+            // 改变了蛇数据，重新渲染 调用蛇显示的方法
+            this.show()
+        }
+
+
+        var count = 0
+            // 25.键盘事件 控制方向
+        document.onkeydown = function(e) {
+            // 兼容写法
+            e = e || window.event;
+            // console.log(e.key);
+            // w上 a左 s下 d右
+            if (e.key == "w" && snake.direction != "bottom"&&tishi._tishi.innerText=='') {
+                snake.direction = "top";
+                snake.body[0][3].style.transform = 'rotate(270deg)' 
+
+            } else if (e.key == "s" && snake.direction != "top" &&tishi._tishi.innerText=='') {
+                snake.direction = "bottom";
+
+                snake.body[0][3].style.transform = 'rotate(90deg)'
+            } else if (e.key == "a" && snake.direction != "right"  &&tishi._tishi.innerText=='') {
+                snake.direction = "left";
+
+                snake.body[0][3].style.transform = 'rotate(180deg)'
+            } else if (e.key == "d" && snake.direction != "left" &&tishi._tishi.innerText=='') {
+                snake.direction = "right";''
+                snake.body[0][3].style.transform = 'rotate(0deg)'
+            }
+
+            //空格键暂停 开始 也可以通过zanting（）函数继续游戏
+            if (e.keyCode == 32) {
+                if (count % 2 == 0) {
+                    clearInterval(start.timer)
+                    tishi._tishi.innerText = "请按空格键继续游戏";
+                    count++;
+                } else {
+                    start.timer = setInterval(function() {
+                        // 24.调用蛇移动的方法
+                        snake.move();
+                        // 27.调用蛇吃食物的方法
+                        snake.eat();
+                        // 29.调用蛇出边界的方法
+                        snake.border()
+                            // 31.调用蛇自残的方法
+                        snake.die()
+                    }, 200)
+                    count++
+                    tishi._tishi.innerText = "";
+                }
+            }
+        }
+
+
+
+
+        // 26.蛇吃食物的方法
+        Snake.prototype.eat = function() {
+            // 蛇头的坐标位置和食物的坐标重合
+            if (this.body[0][0] == food.left && this.body[0][1] == food.top) {
+                // 重新再生成一个食物
+                food.show();
+                // 蛇身体加长
+                this.body.push([10, 0, "url('./images/body.png')", null]);
+                // 分数加1
+                this.score++;
+            }
+            shuzi.innerText = this.score;
+        }
+
+        //32 重新开始按钮
+        function Starts() {
+            this.width = "120px";
+            this.height = "100px";
+            this.position = "absolute";
+            this.top = 0;
+            this.left = 0;
+            this.src = './images/start.png'
+        }
+        Starts.prototype.show = function() {
+                // 创建开始按钮
+                this._starts = document.createElement("img");
+                // 设置样式
+                this._starts.style.width = this.width;
+                this._starts.style.height = this.height;
+                this._starts.style.position = this.position;
+                this._starts.style.top = this.top;
+                this._starts.style.left = this.left;
+                this._starts.src = this.src;
+                this._starts.style.display = 'none'
+                    // 把开始按钮节点添加进地图节点
+                map._map.appendChild(this._starts)
+            }
+            // 5.封装开始按钮
+        function StartP() {
+            // 设置属性
+            this.width = "350px";
+            this.height = "230px";
+            this.position = "absolute";
+            this.top = " calc(50% - 135px)";
+            this.left = "calc(50% - 175px)";
+            this.src = "./images/startP.jpg";
+        }
+
+        // 7.显示方法
+        StartP.prototype.show = function() {
+                // 创建开始按钮
+                this._startp = document.createElement("img");
+                // 设置样式
+                this._startp.style.width = this.width;
+                this._startp.style.height = this.height;
+                this._startp.style.position = this.position;
+                this._startp.style.top = this.top;
+                this._startp.style.left = this.left;
+                this._startp.src = this.src;
+                // 把开始按钮节点添加进地图节点
+                map._map.appendChild(this._startp)
+            }
+            //40 添加分数
+        function Shuzi() {
+            this.width = "50px";
+            this.height = "50px";
+            this.fontSize = "30px";
+            this.top = " calc(50% - 45px)";
+            this.left = "calc(50% - 35px)";
+            this.position = "absolute";
+            this.innerText = ""
+        }
+        Shuzi.prototype.show = function() {
+            this._shuzi = document.createElement("div");
+            this._shuzi.style.width = this.width;
+            this._shuzi.style.height = this.height;
+            this._shuzi.style.fontSize = this.fontSize;
+            this._shuzi.style.top = this.top;
+            this._shuzi.style.left = this.left;
+            this._shuzi.style.position = this.position;
+            this._shuzi.innerText = this.innerText;
+
+            map._map.appendChild(this._shuzi)
+        }
+        var shuzi = new Shuzi
+
+        function Tishi() {
+            this.width = "270px";
+            this.height = "40px";
+            this.fontSize = "25px";
+            this.color = "red"
+            this.top = " calc(50% - 45px)";
+            this.left = "calc(50% - 115px)";
+            this.position = "absolute";
+            this.innerText = " "
+        }
+        Tishi.prototype.show = function() {
+                this._tishi = document.createElement("div");
+                this._tishi.style.width = this.width;
+                this._tishi.style.height = this.height;
+                this._tishi.style.fontSize = this.fontSize;
+                this._tishi.style.color = this.color
+                this._tishi.style.top = this.top;
+                this._tishi.style.left = this.left;
+                this._tishi.style.position = this.position;
+                this._tishi.innerText = this.innerText;
+                map._map.appendChild(this._tishi)
+            }
+            // var tishi = new Tishi
+            //tishi.show();
+            //43 定义关闭函数
+        function Closep() {
+            // 设置属性
+            this.width = "30px";
+            this.height = "23px";
+            this.position = "absolute";
+            this.top = " calc(50% - 133px)";
+            this.left = "calc(50% + 145px)";
+            this.src = "./images/closeBtn.png";
+        }
+
+        // 44.显示方法
+        Closep.prototype.show = function() {
+            // 创建开始按钮
+            this._closep = document.createElement("img");
+            // 设置样式
+            this._closep.style.width = this.width;
+            this._closep.style.height = this.height;
+            this._closep.style.position = this.position;
+            this._closep.style.top = this.top;
+            this._closep.style.left = this.left;
+            this._closep.src = this.src;
+            // 把开始按钮节点添加进地图节点
+            map._map.appendChild(this._closep)
+        }
+
+        // 28.蛇出边界的方法
+        Snake.prototype.border = function() {
+            // 如果超出上下左右边界，游戏区
+            if (this.body[0][0] < 0 || this.body[0][0] > 17 || this.body[0][1] < 0 || this.body[0][1] > 10) {
+                // 游戏结束,清除定时器
+                clearInterval(start.timer);
+                map._map.removeChild(tishi._tishi);
+                // 把游戏区从地图中移除
+                map._map.removeChild(game._game)
+                startp.show();
+                shuzi.show();
+                closep.show();
+                // map._map.removeChild(tishi._tishi);
+                closep._closep.addEventListener('click', function() {
+                    starts._starts.style.display = 'block'
+                    startp._startp.style.display = 'none'
+                    shuzi._shuzi.innerText = "";
+                    map._map.removeChild(shuzi._shuzi);
+                    closep._closep.style.display = 'none';
+                })
+                starts._starts.addEventListener('click', function() { //绑定点击事件
+                    closep._closep.style.display = 'none';
+                    dianji(); //调用点击事件！
+                    starts._starts.style.display = 'none';
+                })
+
+            }
+        }
+
+        // 30.蛇自残的方法
+        Snake.prototype.die = function() {
+            for (var i = 1; i < this.body.length; i++) {
+                // 判断蛇任何一个身体与蛇头重合
+                if (this.body[0][0] == this.body[i][0] && this.body[0][1] == this.body[i][1]) {
+                    // 游戏结束,清除定时器
+                    clearInterval(start.timer);
+                    // 把游戏区从地图中移除
+                    map._map.removeChild(game._game)
+                    tishi._tishi.style.display = 'none'
+                    startp.show();
+                    shuzi.show();
+                    closep.show();
+                    closep._closep.addEventListener('click', function() {
+                        starts._starts.style.display = 'block'
+                        startp._startp.style.display = 'none'
+                        shuzi._shuzi.innerText = "";
+                        map._map.removeChild(shuzi._shuzi);
+                        closep._closep.style.display = 'none';
+                    })
+                    starts._starts.addEventListener('click', function() { //绑定点击事件
+                        closep._closep.style.display = 'none';
+                        tishi.show();
+                        dianji();
+                        starts._starts.style.display = 'none';
+                    })
+                }
+            }
+        }
+
+        // 20.实例化对象
+        var snake = new Snake;
+        // 22.调用蛇显示的方法
+        snake.show();
+        // 开始游戏
+        start.timer = setInterval(function() {
+                // 24.调用蛇移动的方法
+                snake.move();
+                // 27.调用蛇吃食物的方法
+                snake.eat();
+                // 29.调用蛇出边界的方法
+                snake.border()
+                    // 31.调用蛇自残的方法
+                snake.die()
+            }, 200)
+            // 33.实例化对象
+        var starts = new Starts;
+
+        // 34.调用显示方法
+        starts.show();
+
+        // 6.实例化对象
+        var startp = new StartP;
+
+        // 8.调用显示方法
+        //startp.show();
+        var closep = new Closep
+
+        var tishi = new Tishi
+        tishi.show();
+
+
+    }
+</script>
+
+</html>
